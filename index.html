@@ -59,7 +59,6 @@
       border-radius: 50%;
       background: radial-gradient(circle, rgba(255, 255, 220, 0.35), transparent 70%);
     }
-    /* Диск со смещённым центром света — так круг выглядит шаром */
     .moon-disc {
       position: absolute;
       inset: 0;
@@ -218,13 +217,11 @@
 
   <div class="sky" id="sky"></div>
 
-  <!-- Луна-сфера: надпись ASTRUINO идёт по «экватору» шара -->
   <div class="moon">
     <div class="moon-glow"></div>
     <div class="moon-disc"></div>
     <svg viewBox="0 0 160 160">
       <defs>
-        <!-- Дуга через середину: буквы по краям выше, в центре ниже — как на шаре -->
         <path id="sphereArc" d="M 16 68 Q 80 94 144 68" fill="none"/>
       </defs>
       <text font-size="19" font-weight="bold" fill="#6b6552" font-family="Segoe UI, sans-serif" letter-spacing="1">
@@ -233,7 +230,6 @@
     </svg>
   </div>
 
-  <!-- Бегущая строка -->
   <div class="marquee">
     <div class="marquee-track">
       <span>✦ WELCOME TO ASTRUINO ✦ ДОБРО ПОЖАЛОВАТЬ НА САЙТ ✦ СКАЧАЙ ПРИЛОЖЕНИЕ ✦</span>
@@ -265,7 +261,6 @@
     <div class="box">
       <h2>✉ Нашли ошибку?</h2>
       <p>Если заметил опечатку, баг в интерфейсе или что-то не срабатывает — напиши мне. Я читаю все письма и стараюсь быстро всё чинить.</p>
-      <!-- ЗАМЕНИ example@mail.com НА СВОЮ ПОЧТУ -->
       <a href="mailto:example@mail.com" class="btn btn-contact">НАПИСАТЬ ПИСЬМО</a>
     </div>
 
