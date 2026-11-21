@@ -1,290 +1,227 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Astruino Project</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astruino — Космическая электроника</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #7a00ff;
+            --bg-dark: #050510;
+            --text-light: #e0e0ff;
+            --glow-primary: 0 0 10px var(--primary), 0 0 20px var(--primary), 0 0 40px var(--primary);
+            --glow-secondary: 0 0 10px var(--secondary), 0 0 20px var(--secondary), 0 0 40px var(--secondary);
+        }
 
-    body {
-      min-height: 100vh;
-      background: #070716;
-      color: #e0e6f0;
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      overflow-x: hidden;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* ===== ФОН И ЗВЁЗДЫ ===== */
-    .sky {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      background:
-        radial-gradient(circle at 15% 15%, rgba(0, 255, 255, 0.07), transparent 40%),
-        radial-gradient(circle at 85% 70%, rgba(255, 0, 200, 0.07), transparent 40%),
-        radial-gradient(circle at 50% 100%, rgba(80, 80, 255, 0.08), transparent 50%);
-    }
-    .star {
-      position: absolute;
-      border-radius: 50%;
-      background: #fff;
-      will-change: opacity, transform;
-      animation: twinkle 3s infinite ease-in-out;
-    }
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.15; transform: scale(1); }
-      50%      { opacity: 1;    transform: scale(1.35); }
-    }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    /* ===== ЛУНА-СФЕРА С НАДПИСЬЮ ===== */
-    .moon {
-      position: fixed;
-      top: 45px;
-      right: 40px;
-      width: 160px;
-      height: 160px;
-      z-index: 0;
-      will-change: transform;
-      animation: floatMoon 6s ease-in-out infinite;
-      pointer-events: none;
-    }
-    @keyframes floatMoon {
-      0%, 100% { transform: translate3d(0, 0, 0); }
-      50%      { transform: translate3d(0, -12px, 0); }
-    }
-    .moon-glow {
-      position: absolute;
-      inset: -18px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255, 255, 220, 0.35), transparent 70%);
-    }
-    .moon-disc {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 30%, #fdfbe8 0%, #e8e2c4 45%, #b8b094 80%, #948c74 100%);
-      box-shadow:
-        inset -12px -14px 30px rgba(60, 55, 40, 0.45),
-        0 0 25px rgba(255, 255, 220, 0.6);
-    }
-    .moon svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-    }
+        /* Бегущая строка */
+        .marquee-container {
+            background: linear-gradient(90deg, #1a1a3a, #000000, #1a1a3a);
+            color: var(--primary);
+            padding: 15px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
 
-    /* ===== БЕГУЩАЯ СТРОКА ===== */
-    .marquee {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background: rgba(10, 10, 30, 0.85);
-      border-bottom: 1px solid rgba(0, 255, 255, 0.4);
-      overflow: hidden;
-      padding: 10px 0;
-      z-index: 10;
-    }
-    .marquee-track {
-      display: flex;
-      width: max-content;
-      will-change: transform;
-      animation: scrollText 20s linear infinite;
-    }
-    .marquee-track span {
-      white-space: nowrap;
-      color: #00ffff;
-      font-weight: bold;
-      letter-spacing: 2px;
-      padding-right: 60px;
-      text-shadow: 0 0 8px #00ffff;
-    }
-    @keyframes scrollText {
-      from { transform: translate3d(0, 0, 0); }
-      to   { transform: translate3d(-50%, 0, 0); }
-    }
+        .marquee-content {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 20s linear infinite;
+            font-weight: bold;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
 
-    /* ===== КОНТЕНТ ===== */
-    .container {
-      max-width: 700px;
-      margin: 0 auto;
-      padding: 90px 20px 30px;
-    }
+        @keyframes marquee {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
 
-    header { text-align: center; margin-bottom: 40px; }
+        /* Основной контейнер */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 5;
+        }
 
-    h1 {
-      font-size: 3.5em;
-      letter-spacing: 4px;
-      color: #0ff;
-      text-transform: uppercase;
-      text-shadow:
-        0 0 10px #0ff,
-        0 0 20px #0ff,
-        0 0 40px #0ff,
-        0 0 80px #0ff;
-      will-change: transform, opacity;
-      animation: pulse 3s infinite ease-in-out;
-      line-height: 1.1;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1);    opacity: 1; }
-      50%      { transform: scale(1.03); opacity: 0.88; }
-    }
-    .subtitle {
-      color: #8a9bc4;
-      font-size: 1.1em;
-      letter-spacing: 2px;
-      margin-top: 8px;
-      text-transform: uppercase;
-    }
+        /* Декоративные элементы (звёзды) */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
 
-    .box {
-      background: rgba(15, 20, 40, 0.75);
-      border: 1px solid rgba(0, 255, 255, 0.25);
-      border-radius: 14px;
-      padding: 25px;
-      margin-bottom: 25px;
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
-      will-change: transform;
-      transition: transform 0.3s ease;
-    }
-    .box:hover { transform: translate3d(0, -4px, 0); }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: twinkle infinite alternate;
+        }
 
-    h2 {
-      color: #ff4dd8;
-      text-shadow: 0 0 10px #ff4dd8;
-      font-size: 1.3em;
-      margin-bottom: 12px;
-    }
-    p { line-height: 1.7; color: #c4d0e8; }
+        @keyframes twinkle {
+            from { opacity: 0.3; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1.2); }
+        }
 
-    .btn {
-      display: inline-block;
-      padding: 14px 32px;
-      margin-top: 15px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-      letter-spacing: 1px;
-      position: relative;
-      will-change: transform;
-      transition: transform 0.25s ease;
-    }
-    .btn::before {
-      content: '';
-      position: absolute;
-      inset: -6px;
-      border-radius: 12px;
-      z-index: -1;
-      opacity: 0.5;
-      will-change: opacity;
-      transition: opacity 0.3s ease;
-    }
-    .btn-download { color: #00ffff; border: 2px solid #00ffff; background: rgba(0, 255, 255, 0.05); }
-    .btn-download::before { box-shadow: 0 0 18px rgba(0, 255, 255, 0.7); animation: glowPulse 2.5s infinite ease-in-out; }
-    .btn-contact { color: #00ff88; border: 2px solid #00ff88; background: rgba(0, 255, 136, 0.05); }
-    .btn-contact::before { box-shadow: 0 0 18px rgba(0, 255, 136, 0.7); }
+        /* Заголовок */
+        h1 {
+            font-size: 4rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--primary), #fff, var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+            position: relative;
+            z-index: 2;
+        }
 
-    @keyframes glowPulse {
-      0%, 100% { opacity: 0.35; }
-      50%      { opacity: 0.9; }
-    }
-    .btn:hover { transform: scale(1.05); }
-    .btn:hover::before { opacity: 1; }
+        .subtitle {
+            font-size: 1.5rem;
+            color: #aaa;
+            margin-bottom: 60px;
+            max-width: 600px;
+            text-align: center;
+            line-height: 1.6;
+            position: relative;
+            z-index: 2;
+        }
 
-    .note { font-size: 0.85em; color: #ffd166; margin-top: 12px; }
+        /* Кнопка */
+        .download-btn {
+            display: inline-block;
+            padding: 20px 50px;
+            background: linear-gradient(135deg, var(--secondary), #5a00c0);
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 50px;
+            box-shadow: 0 0 20px var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 3;
+            overflow: hidden;
+        }
 
-    .divider {
-      height: 2px;
-      border: none;
-      background: linear-gradient(90deg, transparent, #00ffff, #ff4dd8, transparent);
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-      margin: 30px 0;
-    }
+        .download-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s ease;
+        }
 
-    footer { text-align: center; color: #5a6a8a; font-size: 0.85em; margin-top: 40px; }
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px var(--secondary), 0 0 60px rgba(122, 0, 255, 0.5);
+        }
 
-    @media (max-width: 600px) {
-      .moon { width: 110px; height: 110px; top: 60px; right: 15px; }
-      h1 { font-size: 2.5em; }
-    }
-  </style>
+        .download-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Футер */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #555;
+            font-size: 0.9rem;
+            border-top: 1px solid #222;
+            margin-top: auto;
+            z-index: 5;
+        }
+
+        /* Адаптив */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .subtitle { font-size: 1.2rem; }
+            .download-btn { padding: 15px 30px; font-size: 1.2rem; }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="sky" id="sky"></div>
+    <!-- Звёзды на фоне -->
+    <div class="stars" id="stars"></div>
 
-  <div class="moon">
-    <div class="moon-glow"></div>
-    <div class="moon-disc"></div>
-    <svg viewBox="0 0 160 160">
-      <defs>
-        <path id="sphereArc" d="M 16 68 Q 80 94 144 68" fill="none"/>
-      </defs>
-      <text font-size="19" font-weight="bold" fill="#6b6552" font-family="Segoe UI, sans-serif" letter-spacing="1">
-        <textPath href="#sphereArc" startOffset="50%" text-anchor="middle">ASTRUINO</textPath>
-      </text>
-    </svg>
-  </div>
-
-  <div class="marquee">
-    <div class="marquee-track">
-      <span>✦ WELCOME TO ASTRUINO ✦ ДОБРО ПОЖАЛОВАТЬ НА САЙТ ✦ СКАЧАЙ ПРИЛОЖЕНИЕ ✦</span>
-      <span>✦ WELCOME TO ASTRUINO ✦ ДОБРО ПОЖАЛОВАТЬ НА САЙТ ✦ СКАЧАЙ ПРИЛОЖЕНИЕ ✦</span>
-    </div>
-  </div>
-
-  <div class="container">
-
-    <header>
-      <h1>ASTRUINO</h1>
-      <p class="subtitle">— проект в стиле неон —</p>
-    </header>
-
-    <div class="box">
-      <h2>⚡ О проекте</h2>
-      <p>Astruino — это попытка собрать «мозг» для устройства простыми средствами. Здесь нет сложных промышленных схем: только понятная логика, чёткие реакции и интерфейс, который не заставляет пользователя гадать, что сейчас происходит.</p>
-      <p>Я специально не прятал сложность за чёрным ящиком — наоборот, хотел показать, как шаг за шагом строится взаимодействие: нажал кнопку — получил понятный результат, увидел статус, сохранил прогресс. И самое главное — всё это собрано и дорабатывается с телефона, без компьютера. Для меня это про то, что хорошая идея не ждёт «идеальных условий», она работает уже сейчас.</p>
+    <!-- Бегущая строка -->
+    <div class="marquee-container">
+        <div class="marquee-content">
+            Astruino — Космическая электроника будущего • Astruino — Космическая электроника будущего •
+        </div>
     </div>
 
-    <div class="box">
-      <h2>📥 Скачать приложение</h2>
-      <p>Нажми кнопку — скачивание начнётся сразу, без лишних страниц.</p>
-      <a href="Astruino.apk" class="btn btn-download" download>СКАЧАТЬ APK</a>
-    </div>
+    <main>
+        <h1>Astruino</h1>
+        <p class="subtitle">
+            Передовые технологии в компактном корпусе. Приложение для управления космическими модулями и мониторинга телеметрии в реальном времени.
+        </p>
+        <a href="Astruino_1_4%20(1).apk" class="download-btn">Скачать приложение</a>
+    </main>
 
-    <hr class="divider">
+    <footer>
+        &copy; 2024 Astruino Project. Все права защищены.
+    </footer>
 
-    <div class="box">
-      <h2>✉ Нашли ошибку?</h2>
-      <p>Если заметил опечатку, баг в интерфейсе или что-то не срабатывает — напиши мне. Я читаю все письма и стараюсь быстро всё чинить.</p>
-      <a href="mailto:example@mail.com" class="btn btn-contact">НАПИСАТЬ ПИСЬМО</a>
-    </div>
+    <script>
+        // Генерация звёзд
+        const starsContainer = document.getElementById('stars');
+        const starCount = 150;
 
-    <footer>© 2026 Astruino Project</footer>
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            
+            const size = Math.random() * 3 + 1; // Размер от 1px до 4px
+            const x = Math.random() * 100; // Позиция по X в процентах
+            const y = Math.random() * 100; // Позиция по Y в процентах
+            const duration = Math.random() * 3 + 2; // Длительность анимации
 
-  </div>
+            star.style.width = `\${size}px`;
+            star.style.height = `\${size}px`;
+            star.style.left = `\${x}%`;
+            star.style.top = `\${y}%`;
+            star.style.animationDuration = `\${duration}s`;
 
-  <script>
-    const sky = document.getElementById('sky');
-    const frag = document.createDocumentFragment();
-    for (let i = 0; i < 80; i++) {
-      const star = document.createElement('div');
-      star.className = 'star';
-      const size = Math.random() * 3 + 1;
-      star.style.width = size + 'px';
-      star.style.height = size + 'px';
-      star.style.left = Math.random() * 100 + '%';
-      star.style.top = Math.random() * 100 + '%';
-      star.style.animationDelay = (Math.random() * 3).toFixed(2) + 's';
-      star.style.animationDuration = (Math.random() * 3 + 2).toFixed(2) + 's';
-      frag.appendChild(star);
-    }
-    sky.appendChild(frag);
-  </script>
-
+            starsContainer.appendChild(star);
+        }
+    </script>
 </body>
 </html>
