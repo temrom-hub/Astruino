@@ -1,187 +1,295 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ASTRUINO — космическая электроника</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astruino Project</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  body {
-    min-height: 100vh;
-    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
-    color: #fff;
-    font-family: Arial, sans-serif;
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    position: relative;
-    padding: 40px 20px;
-  }
+    body {
+      min-height: 100vh;
+      background: #070716;
+      color: #e0e6f0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      overflow-x: hidden;
+    }
 
-  /* звёздное небо */
-  .stars, .stars2, .stars3 {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-  }
-  .stars {
-    background-image:
-      radial-gradient(1.5px 1.5px at 20px 30px, #fff, transparent),
-      radial-gradient(1.5px 1.5px at 90px 120px, #fff, transparent),
-      radial-gradient(1px 1px at 160px 60px, #fff, transparent),
-      radial-gradient(1px 1px at 240px 180px, #fff, transparent),
-      radial-gradient(1.5px 1.5px at 320px 40px, #fff, transparent);
-    background-size: 400px 400px;
-    animation: twinkle 4s ease-in-out infinite;
-  }
-  .stars2 {
-    background-image:
-      radial-gradient(1px 1px at 50px 100px, #aef, transparent),
-      radial-gradient(1.5px 1.5px at 180px 20px, #aef, transparent),
-      radial-gradient(1px 1px at 280px 220px, #aef, transparent);
-    background-size: 350px 350px;
-    animation: twinkle 6s ease-in-out infinite reverse;
-  }
-  .stars3 {
-    background-image:
-      radial-gradient(2px 2px at 120px 80px, #fff, transparent),
-      radial-gradient(1.5px 1.5px at 300px 150px, #ffd, transparent);
-    background-size: 300px 300px;
-    animation: twinkle 3s ease-in-out infinite;
-  }
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 1; }
-  }
+    /* ===== ФОН И ЗВЁЗДЫ ===== */
+    .sky {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(0, 255, 255, 0.07), transparent 40%),
+        radial-gradient(circle at 85% 70%, rgba(255, 0, 200, 0.07), transparent 40%),
+        radial-gradient(circle at 50% 100%, rgba(80, 80, 255, 0.08), transparent 50%);
+    }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #fff;
+      will-change: opacity, transform;
+      animation: twinkle 3s infinite ease-in-out;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.15; transform: scale(1); }
+      50%      { opacity: 1;    transform: scale(1.35); }
+    }
 
-  /* луна */
-  .moon {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #fdfbfb 0%, #c9d1d9 55%, #8a939c 100%);
-    box-shadow:
-      0 0 60px rgba(255,255,255,0.45),
-      0 0 140px rgba(160,200,255,0.25);
-    margin-bottom: 40px;
-    animation: float 6s ease-in-out infinite;
-    position: relative;
-  }
-  /* кратеры */
-  .moon::before, .moon::after {
-    content: "";
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.12);
-  }
-  .moon::before {
-    width: 34px; height: 34px;
-    top: 30px; left: 45px;
-    box-shadow: 22px 46px 0 -6px rgba(0,0,0,0.10), -30px 20px 0 -10px rgba(0,0,0,0.10);
-  }
-  .moon::after {
-    width: 20px; height: 20px;
-    top: 95px; left: 95px;
-    background: rgba(0,0,0,0.15);
-  }
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-14px); }
-  }
+    /* ===== ЛУНА-СФЕРА С НАДПИСЬЮ ===== */
+    .moon {
+      position: fixed;
+      top: 45px;
+      right: 40px;
+      width: 160px;
+      height: 160px;
+      z-index: 0;
+      will-change: transform;
+      animation: floatMoon 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes floatMoon {
+      0%, 100% { transform: translate3d(0, 0, 0); }
+      50%      { transform: translate3d(0, -12px, 0); }
+    }
+    .moon-glow {
+      position: absolute;
+      inset: -18px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 220, 0.35), transparent 70%);
+    }
+    /* Диск со смещённым центром света — так круг выглядит шаром */
+    .moon-disc {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fdfbe8 0%, #e8e2c4 45%, #b8b094 80%, #948c74 100%);
+      box-shadow:
+        inset -12px -14px 30px rgba(60, 55, 40, 0.45),
+        0 0 25px rgba(255, 255, 220, 0.6);
+    }
+    .moon svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
 
-  /* падающая звезда */
-  .shooting {
-    position: fixed;
-    top: 12%;
-    left: -10%;
-    width: 120px;
-    height: 2px;
-    background: linear-gradient(90deg, #fff, transparent);
-    transform: rotate(35deg);
-    animation: shoot 9s linear infinite;
-    pointer-events: none;
-  }
-  @keyframes shoot {
-    0% { transform: translateX(0) rotate(35deg); opacity: 0; }
-    5% { opacity: 1; }
-    25% { transform: translateX(120vw) translateY(70vh) rotate(35deg); opacity: 0; }
-    100% { opacity: 0; }
-  }
+    /* ===== БЕГУЩАЯ СТРОКА ===== */
+    .marquee {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(10, 10, 30, 0.85);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.4);
+      overflow: hidden;
+      padding: 10px 0;
+      z-index: 10;
+    }
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      will-change: transform;
+      animation: scrollText 20s linear infinite;
+    }
+    .marquee-track span {
+      white-space: nowrap;
+      color: #00ffff;
+      font-weight: bold;
+      letter-spacing: 2px;
+      padding-right: 60px;
+      text-shadow: 0 0 8px #00ffff;
+    }
+    @keyframes scrollText {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(-50%, 0, 0); }
+    }
 
-  .title {
-    font-size: clamp(2.5rem, 10vw, 5rem);
-    font-weight: bold;
-    letter-spacing: 8px;
-    color: #00ffff;
-    text-shadow: 0 0 10px #0ff, 0 0 40px #08a;
-    animation: glow 3s ease-in-out infinite;
-    margin-bottom: 12px;
-  }
-  @keyframes glow {
-    0%, 100% { text-shadow: 0 0 10px #0ff, 0 0 40px #08a; }
-    50% { text-shadow: 0 0 20px #0ff, 0 0 70px #0ff; }
-  }
+    /* ===== КОНТЕНТ ===== */
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 90px 20px 30px;
+    }
 
-  .subtitle {
-    color: #aab8c5;
-    font-size: 1.1rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 50px;
-  }
+    header { text-align: center; margin-bottom: 40px; }
 
-  .btn {
-    display: inline-block;
-    padding: 18px 48px;
-    border: 2px solid #00ffff;
-    border-radius: 40px;
-    color: #00ffff;
-    text-decoration: none;
-    font-weight: bold;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    transition: all 0.3s ease;
-    animation: pulse 2.5s ease-in-out infinite;
-  }
-  .btn:hover {
-    background: #00ffff;
-    color: #090a0f;
-    box-shadow: 0 0 40px rgba(0,255,255,0.8);
-    transform: scale(1.05);
-  }
-  @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 15px rgba(0,255,255,0.3); }
-    50% { box-shadow: 0 0 35px rgba(0,255,255,0.7); }
-  }
+    h1 {
+      font-size: 3.5em;
+      letter-spacing: 4px;
+      color: #0ff;
+      text-transform: uppercase;
+      text-shadow:
+        0 0 10px #0ff,
+        0 0 20px #0ff,
+        0 0 40px #0ff,
+        0 0 80px #0ff;
+      will-change: transform, opacity;
+      animation: pulse 3s infinite ease-in-out;
+      line-height: 1.1;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1);    opacity: 1; }
+      50%      { transform: scale(1.03); opacity: 0.88; }
+    }
+    .subtitle {
+      color: #8a9bc4;
+      font-size: 1.1em;
+      letter-spacing: 2px;
+      margin-top: 8px;
+      text-transform: uppercase;
+    }
 
-  .version {
-    margin-top: 24px;
-    color: #678;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-  }
-</style>
+    .box {
+      background: rgba(15, 20, 40, 0.75);
+      border: 1px solid rgba(0, 255, 255, 0.25);
+      border-radius: 14px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+      will-change: transform;
+      transition: transform 0.3s ease;
+    }
+    .box:hover { transform: translate3d(0, -4px, 0); }
+
+    h2 {
+      color: #ff4dd8;
+      text-shadow: 0 0 10px #ff4dd8;
+      font-size: 1.3em;
+      margin-bottom: 12px;
+    }
+    p { line-height: 1.7; color: #c4d0e8; }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 32px;
+      margin-top: 15px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      letter-spacing: 1px;
+      position: relative;
+      will-change: transform;
+      transition: transform 0.25s ease;
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 12px;
+      z-index: -1;
+      opacity: 0.5;
+      will-change: opacity;
+      transition: opacity 0.3s ease;
+    }
+    .btn-download { color: #00ffff; border: 2px solid #00ffff; background: rgba(0, 255, 255, 0.05); }
+    .btn-download::before { box-shadow: 0 0 18px rgba(0, 255, 255, 0.7); animation: glowPulse 2.5s infinite ease-in-out; }
+    .btn-contact { color: #00ff88; border: 2px solid #00ff88; background: rgba(0, 255, 136, 0.05); }
+    .btn-contact::before { box-shadow: 0 0 18px rgba(0, 255, 136, 0.7); }
+
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.35; }
+      50%      { opacity: 0.9; }
+    }
+    .btn:hover { transform: scale(1.05); }
+    .btn:hover::before { opacity: 1; }
+
+    .note { font-size: 0.85em; color: #ffd166; margin-top: 12px; }
+
+    .divider {
+      height: 2px;
+      border: none;
+      background: linear-gradient(90deg, transparent, #00ffff, #ff4dd8, transparent);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+      margin: 30px 0;
+    }
+
+    footer { text-align: center; color: #5a6a8a; font-size: 0.85em; margin-top: 40px; }
+
+    @media (max-width: 600px) {
+      .moon { width: 110px; height: 110px; top: 60px; right: 15px; }
+      h1 { font-size: 2.5em; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="stars"></div>
-<div class="stars2"></div>
-<div class="stars3"></div>
-<div class="shooting"></div>
+  <div class="sky" id="sky"></div>
 
-<div class="moon"></div>
+  <!-- Луна-сфера: надпись ASTRUINO идёт по «экватору» шара -->
+  <div class="moon">
+    <div class="moon-glow"></div>
+    <div class="moon-disc"></div>
+    <svg viewBox="0 0 160 160">
+      <defs>
+        <!-- Дуга через середину: буквы по краям выше, в центре ниже — как на шаре -->
+        <path id="sphereArc" d="M 16 68 Q 80 94 144 68" fill="none"/>
+      </defs>
+      <text font-size="19" font-weight="bold" fill="#6b6552" font-family="Segoe UI, sans-serif" letter-spacing="1">
+        <textPath href="#sphereArc" startOffset="50%" text-anchor="middle">ASTRUINO</textPath>
+      </text>
+    </svg>
+  </div>
 
-<div class="title">ASTRUINO</div>
-<div class="subtitle">Космическая электроника</div>
+  <!-- Бегущая строка -->
+  <div class="marquee">
+    <div class="marquee-track">
+      <span>✦ WELCOME TO ASTRUINO ✦ ДОБРО ПОЖАЛОВАТЬ НА САЙТ ✦ СКАЧАЙ ПРИЛОЖЕНИЕ ✦</span>
+      <span>✦ WELCOME TO ASTRUINO ✦ ДОБРО ПОЖАЛОВАТЬ НА САЙТ ✦ СКАЧАЙ ПРИЛОЖЕНИЕ ✦</span>
+    </div>
+  </div>
 
-<a class="btn" href="Astruino_1_4%20(1).apk" download>⬇ Скачать приложение</a>
+  <div class="container">
 
-<div class="version">Версия 1.4 • Android</div>
+    <header>
+      <h1>ASTRUINO</h1>
+      <p class="subtitle">— проект в стиле неон —</p>
+    </header>
+
+    <div class="box">
+      <h2>⚡ О проекте</h2>
+      <p>Astruino — это попытка собрать «мозг» для устройства простыми средствами. Здесь нет сложных промышленных схем: только понятная логика, чёткие реакции и интерфейс, который не заставляет пользователя гадать, что сейчас происходит.</p>
+      <p>Я специально не прятал сложность за чёрным ящиком — наоборот, хотел показать, как шаг за шагом строится взаимодействие: нажал кнопку — получил понятный результат, увидел статус, сохранил прогресс. И самое главное — всё это собрано и дорабатывается с телефона, без компьютера. Для меня это про то, что хорошая идея не ждёт «идеальных условий», она работает уже сейчас.</p>
+    </div>
+
+    <div class="box">
+      <h2>📥 Скачать приложение</h2>
+      <p>Нажми кнопку — скачивание начнётся сразу, без лишних страниц.</p>
+      <a href="Astruino.apk" class="btn btn-download" download>СКАЧАТЬ APK</a>
+    </div>
+
+    <hr class="divider">
+
+    <div class="box">
+      <h2>✉ Нашли ошибку?</h2>
+      <p>Если заметил опечатку, баг в интерфейсе или что-то не срабатывает — напиши мне. Я читаю все письма и стараюсь быстро всё чинить.</p>
+      <!-- ЗАМЕНИ example@mail.com НА СВОЮ ПОЧТУ -->
+      <a href="mailto:example@mail.com" class="btn btn-contact">НАПИСАТЬ ПИСЬМО</a>
+    </div>
+
+    <footer>© 2026 Astruino Project</footer>
+
+  </div>
+
+  <script>
+    const sky = document.getElementById('sky');
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < 80; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      const size = Math.random() * 3 + 1;
+      star.style.width = size + 'px';
+      star.style.height = size + 'px';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = (Math.random() * 3).toFixed(2) + 's';
+      star.style.animationDuration = (Math.random() * 3 + 2).toFixed(2) + 's';
+      frag.appendChild(star);
+    }
+    sky.appendChild(frag);
+  </script>
 
 </body>
 </html>
